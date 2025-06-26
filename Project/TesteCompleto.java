@@ -1,6 +1,9 @@
 // Esse é o exercicio pratique do segundo trimestre
 // Feito por Silverley
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -8,6 +11,7 @@ public class TesteCompleto {
 	public static ArrayList<Usuario> UsuariosLista = new ArrayList<Usuario>(Dados.lerUsuarios());
 	public static ArrayList<Evento> EventosLista = new ArrayList<Evento>(Dados.lerEventos());
 	public static Scanner entrada = new Scanner(System.in).useDelimiter("\n");
+	public static SimpleDateFormat formatador = new SimpleDateFormat("dd-MM-yyyy");
 
 	public static void main(String args[]) {
 		Usuario usuarioAtivo = null;
@@ -88,12 +92,12 @@ public class TesteCompleto {
 			System.out.println("\nQual é seu email :");
 			String emailEntrar = entrada.next();
 			for (Usuario usuario : UsuariosLista) {
-			//	System.out.println("|" + nomeUsuario + "|"
-			//			+ usuario.getLogin()
-			//			+ "|");
-			//	System.out.println("|" + emailEntrar + "|"
-			//			+ usuario.getEmail()
-			//			+ "|");
+				// System.out.println("|" + nomeUsuario + "|"
+				// + usuario.getLogin()
+				// + "|");
+				// System.out.println("|" + emailEntrar + "|"
+				// + usuario.getEmail()
+				// + "|");
 				boolean verdadeiroLogin = nomeUsuario.trim().equals(usuario.getLogin());
 				boolean verdadeiroEmail = emailEntrar.trim().equals(usuario.getEmail());
 				if (verdadeiroLogin && verdadeiroEmail) {
@@ -142,13 +146,44 @@ public class TesteCompleto {
 		String nomeEvento = entrada.next();
 		System.out.println("\ndescrição do evento:");
 		String descricaoEvento = entrada.next();
-		System.out.println("\ndata do evento:");
-		String dataEvento = entrada.next();
+		String dataString = null;
+		boolean dataCorreta = false;
+		Date date = null;
+		while (!dataCorreta) {
+			System.out.println("\ndata desejada para o evento 'dd-mm-aaaa'");
+			String input = entrada.next();
+			try {
+				date = formatador.parse(input);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			String dataFormatada = formatador.format(date);
+			dataString = dataFormatada.toString();
+			boolean Certeza = false;
+			while (!Certeza) {
+				System.out.println("tem certeza que desejar marcar esse evento nesta data '"
+						+ dataString
+						+ "' ?");
+				String certeza = entrada.next();
+				switch (certeza) {
+					case "sim":
+						System.out.println("ok");
+						dataCorreta = true;
+						Certeza = true;
+						break;
+					case "nao":
+						Certeza = true;
+						break;
+					default:
+						System.out.println("por favor responda apenas 'sim' ou 'nao'");
+				}
+			}
+		}
 		System.out.println("\nhorario do evento");
 		String horarioEvento = entrada.next();
 		System.out.println("\ncidade do evento:");
 		String cidadeEvento = entrada.next();
-		Evento eventoCadastrado = new Evento(nomeEvento, dataEvento, horarioEvento,
+		Evento eventoCadastrado = new Evento(nomeEvento, dataString, horarioEvento,
 				cidadeEvento, descricaoEvento);
 		EventosLista.add(eventoCadastrado);
 		Dados.guardarTodosEventos();
